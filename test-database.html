@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Database Test</h1>
+    <button onclick="testConnection()">Test Database Connection</button>
+    <button onclick="testTable()">Test Reports Table</button>
+    <button onclick="insertTest()">Insert Test Report</button>
+    <div id="result"></div>
+
+    <script>
+        const supabaseUrl = 'https://udgdoexwzuxcvkiearbt.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkZ2RvZXh3enV4Y3ZraWVhcmJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTgwOTksImV4cCI6MjA2OTA3NDA5OX0.CsxD-D6ruxV3WE9CX_h4ETW29AxHZO4YEQKxg-VCNDw'
+        
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+
+        async function testConnection() {
+            try {
+                const { data, error } = await supabase.from('reports').select('count')
+                if (error) {
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Connection Error: ${error.message}</p>`
+                } else {
+                    document.getElementById('result').innerHTML = `<p style="color: green;">✅ Database connection successful!</p>`
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Connection failed: ${err.message}</p>`
+            }
+        }
+
+        async function testTable() {
+            try {
+                const { data, error } = await supabase.from('reports').select('*').limit(1)
+                if (error) {
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Table Error: ${error.message}</p>`
+                } else {
+                    document.getElementById('result').innerHTML = `<p style="color: green;">✅ Reports table accessible! Found ${data.length} records.</p>`
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Table test failed: ${err.message}</p>`
+            }
+        }
+
+        async function insertTest() {
+            try {
+                const { data, error } = await supabase.from('reports').insert({
+                    description: 'Test report from browser',
+                    location: 'Test location',
+                    user_email: 'test@example.com',
+                    latitude: 10.5276,
+                    longitude: 76.2144
+                })
+                if (error) {
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Insert Error: ${error.message}</p>`
+                } else {
+                    document.getElementById('result').innerHTML = `<p style="color: green;">✅ Test report inserted successfully!</p>`
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Insert failed: ${err.message}</p>`
+            }
+        }
+    </script>
+</body>
+</html> 
